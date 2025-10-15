@@ -17,11 +17,14 @@ export const goodsFromServer = [
   'Garlic',
 ];
 
-const SORT_BY_ALPHABET: string = 'alphabet';
-const SORT_BY_LENGTH: string = 'length';
+enum SortType {
+  Alphabet = 'alphabet',
+  Length = 'length',
+  Default = '',
+}
 
 export const App: React.FC = () => {
-  const [sortField, setSortField] = useState('');
+  const [sortField, setSortField] = useState<SortType>(SortType.Default);
   const [reversed, setReversed] = useState(false);
 
   let visibleGoods = goodsFromServer;
@@ -29,10 +32,10 @@ export const App: React.FC = () => {
   if (sortField) {
     visibleGoods = [...visibleGoods].sort((good1, good2) => {
       switch (sortField) {
-        case SORT_BY_ALPHABET:
+        case SortType.Alphabet:
           return good1.localeCompare(good2);
 
-        case SORT_BY_LENGTH:
+        case SortType.Length:
           return good1.length - good2.length;
 
         default:
@@ -45,13 +48,13 @@ export const App: React.FC = () => {
     visibleGoods = [...visibleGoods].reverse();
   }
 
-  const isChanged = sortField !== '' || reversed;
+  const isChanged = sortField !== SortType.Default || reversed;
 
-  const handleSortByAlphabet = () => setSortField(SORT_BY_ALPHABET);
-  const handleSortByLength = () => setSortField(SORT_BY_LENGTH);
+  const handleSortByAlphabet = () => setSortField(SortType.Alphabet);
+  const handleSortByLength = () => setSortField(SortType.Length);
   const handleToggleReverse = () => setReversed(prev => !prev);
   const handleReset = () => {
-    setSortField('');
+    setSortField(SortType.Default);
     setReversed(false);
   };
 
@@ -61,7 +64,7 @@ export const App: React.FC = () => {
         <button
           type="button"
           className={cn('button is-info', {
-            'is-light': sortField !== SORT_BY_ALPHABET,
+            'is-light': sortField !== SortType.Alphabet,
           })}
           onClick={handleSortByAlphabet}
         >
@@ -71,7 +74,7 @@ export const App: React.FC = () => {
         <button
           type="button"
           className={cn('button is-success', {
-            'is-light': sortField !== SORT_BY_LENGTH,
+            'is-light': sortField !== SortType.Length,
           })}
           onClick={handleSortByLength}
         >
